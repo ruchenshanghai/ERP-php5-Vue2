@@ -1,0 +1,48 @@
+1、2017/09/27 增加"双击商品行，设置商品功能"。
+				goodsBatch.js 256行
+				//isSingle && (callback(), frameElement.api.close());
+				$("#grid").jqGrid('setSelection',a);
+				callback();
+				frameElement.api.close();
+2、2017/09/27 仓库->其他入库单->供应商->选择供应商，修改弹出对话框的高度。
+				common.js 2331行 
+				height: 400,
+3、2017/09/27 仓库->其他入库单->供应商->选择供应商，增加"双击供应商，设置供应商功能"。
+				selectCustomer.js 108行 
+				//jason xie add 2017/09/27
+				,ondblClickRow: function(a, b) {
+					callback();
+					frameElement.api.close();
+				}
+4、2017/09/27 仓库->其它出库单，审核
+5、Chrome浏览器，服务器响应错误
+6、2017/09/30 供应商编号不要和供应商名称放一起
+	selectCustomer.js 第8行
+	common.js Business.supplierCombo 第1111行
+			//return row.number + ' ' + row.name;
+			return row.name;
+7、2017/09/30 采购单输入商品名时，直接返回商品名
+	common.js Business.formatGoodsName 第1272行
+	//jason.xie 2017/09/30 直接返回商品名
+	//return number + ' ' + name + spec;
+	return name;
+	goodsBatch.js 第15行等6个地方
+	if (i.id = i.id.split("_")[0], h.SYSTEM.goodsInfo.push(i), "" === i.spec)
+		{
+			//jason.xie 2017/09/30
+			//var j = i.number + " " + i.name;
+			var j = i.name;
+		}
+		else 
+		{
+			//jason.xie 2017/09/30
+			//var j = i.number + " " + i.name + "_" + i.spec;
+			var j = i.name;
+		}
+8、2017/10/01 开户行、银行账号、地址、税号、送货地址
+9、2017/10/02 增加采购订单、销售订单
+	default.js 第553行
+	新文件scm/invPo.php、scm/invSo.php
+10、供应商编号自动
+11、删除出库单、入库单，相应的源单信息也要改变。
+	
