@@ -233,12 +233,16 @@ class Inventory extends CI_Controller {
      
 	//新增
 	public function add(){
+        // die('11111111');
+        // echo '11111111111111111111111111111';
 		$this->common_model->checkpurview(69);
 		$data = $this->input->post(NULL,TRUE);
+
 		if ($data) {
 		    $v = '';
-		    
-		    //jason.xie 改为系统自建商品编号		    
+
+            //jason.xie 改为系统自建商品编号
+            //
 		    $count = $this->mysql_model->query(GOODS,"SELECT MAX(id) as numrows FROM ".GOODS,1);
 		    $data['number'] = '95ZYGD'.str_pad($count[numrows]+1,4,"0",STR_PAD_LEFT);
 		    //end
@@ -485,6 +489,14 @@ class Inventory extends CI_Controller {
 		intval($data['categoryId']) < 1 && str_alert(-1,'商品类别不能为空');
 		intval($data['baseUnitId']) < 1 && str_alert(-1,'计量单位不能为空');
         $id=$this->mysql_model->get_row(GOODS,"(isDelete=0) and (spec='$data[spec]')",'id');
+
+        if (!empty($name)) {
+            //判断数据库存在相同商品名称的商品
+            if (empty($data['name']) || $name != $data['name']) {
+                str_alert(-1, '已经有相同名称商品存在');
+            }
+        }
+
         if(!empty($id))
         {
             //数据库已经存在相同的型号商品
