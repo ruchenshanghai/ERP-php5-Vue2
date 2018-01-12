@@ -22,7 +22,7 @@ class AssistData extends CI_Controller
     }
 
 
-    public function fetch()
+    public function PayMethod()
     {
         $postData = json_decode(file_get_contents('php://input'));
         $userName = $postData->userName;
@@ -33,13 +33,13 @@ class AssistData extends CI_Controller
         $user = $this->mysql_model->checkUserPwd($userName, $password);
         if ($user != null) {
             $response->status = true;
-            $fetchData = $this->fetchList($fetchConfig);
+            $fetchData = $this->fetchPayMethodList($fetchConfig);
             $response->info = $fetchData;
         }
         echo json_encode($response);
     }
 
-    private function fetchList($fetchConfig)
+    private function fetchPayMethodList($fetchConfig)
     {
         $v = array();
         $type = $fetchConfig->typeNumber;
