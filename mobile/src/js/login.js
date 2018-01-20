@@ -261,19 +261,20 @@ $(function () {
             nextButton.removeClass('disabled');
           }
         }
-
         // watch validate input
         validateCode.on('input propertychange', function () {
           // console.log('validate code: ' + validateCode.val());
           // check code
           if (validateCode.val() === targetCode) {
-            $.alert('验证成功');
             console.log('validate code: ' + validateCode.val());
             // set cookie
             $.fn.cookie('phoneNumber', phoneNumber.val());
             $.fn.cookie('locationPicker', locationPicker.val());
             // link to identity register page
-            location.href = './register.html';
+
+            $.alert('验证成功', '成功', function () {
+              location.href = './register.html';
+            });
           }
         });
         $.alert('已向' + phoneNumber.val() + '发送验证码，请注意查收', '成功!');
