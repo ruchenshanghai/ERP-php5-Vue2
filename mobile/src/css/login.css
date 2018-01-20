@@ -1,0 +1,12 @@
+.text-blue-color {
+    color: #0d3470;
+}
+
+li {
+    list-style-type: none;
+    margin: 1rem;
+}
+
+.hidden-li {
+    display: none;
+}
