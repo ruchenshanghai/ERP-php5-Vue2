@@ -77,7 +77,7 @@ define('OPTIONS','ci_options');
 define('PRINTTEMPLATES','ci_printtemplates');
 $active_group = 'default';
 $active_record = TRUE;
-$db['default']['hostname'] = 'localhost';//'139.196.36.119 or localhost';//
+$db['default']['hostname'] = '139.196.36.119';//'localhost';//
 $db['default']['port'] = '3306';
 $db['default']['username'] = 'derp';
 $db['default']['password'] = 'derp';

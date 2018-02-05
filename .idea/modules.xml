@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ERP-PCWeb.iml" filepath="$PROJECT_DIR$/.idea/ERP-PCWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ERP-PCWeb.iml" filepath="$PROJECT_DIR$/ERP-PCWeb.iml" />
     </modules>
   </component>
 </project>
