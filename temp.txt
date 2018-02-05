@@ -1,4 +1,0 @@
-
-a.preventDefault(), $("#grid").jqGrid("setGridParam", {
-   url: "../basedata/assist?action=list&typeNumber=PayMethod&isDelete=2",
-   datatype: "json"

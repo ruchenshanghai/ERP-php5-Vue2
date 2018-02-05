@@ -180,7 +180,6 @@ class CI_DB_mysqli_driver extends CI_DB {
             //exit($sql);
             //exit("test:".$this->conn_id);
             $result = @mysqli_query($this->conn_id, $sql);
-            //exit(print_r($result));
             return $result;
         }
         catch (Exception $ex)

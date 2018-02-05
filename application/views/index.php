@@ -1,4 +1,3 @@
-
 <?php $this->load->view('header');?>
 
 <script type="text/javascript">

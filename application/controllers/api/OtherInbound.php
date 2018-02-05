@@ -119,50 +119,49 @@ class OtherInbound extends CI_Controller
         echo json_encode($response);
     }
 
-    private function detailInbound($fetchConfig)
-    {
+    private function detailInbound($fetchConfig) {
         $data = null;
         $result = null;
 
         $id = $fetchConfig->id;
-        $data = $this->data_model->get_invoice('and (a.id=' . $id . ') and billType="OI"', 1);
-        if (count($data) > 0) {
+        $data = $this->data_model->get_invoice('and (a.id='.$id.') and billType="OI"',1);
+        if (count($data)>0) {
             $v = array();
-            $result['id'] = intval($data['id']);
-            $result['buId'] = intval($data['buId']);
-            $result['contactName'] = $data['contactName'];
-            $result['date'] = $data['billDate'];
-            $result['billNo'] = $data['billNo'];
-            $result['billType'] = $data['billType'];
-            $result['modifyTime'] = $data['modifyTime'];
-            $result['transType'] = intval($data['transType']);
-            $result['totalQty'] = (float)$data['totalQty'];
-            $result['totalAmount'] = (float)$data['totalAmount'];
-            $result['userName'] = $data['userName'];
-            $result['amount'] = (float)abs($data['totalAmount']);
-            $result['checked'] = intval($data['checked']);
-            $result['status'] = intval($data['checked']) == 1 ? 'view' : 'edit';
-            $list = $this->data_model->get_invoice_info('and (iid=' . $id . ')  order by id desc');
-            foreach ($list as $arr => $row) {
-                $v[$arr]['invSpec'] = $row['invSpec'];
-                $v[$arr]['goods'] = $row['invName'];
-                $v[$arr]['spec'] = $row['invSpec'];
-                $v[$arr]['invName'] = $row['invName'];
-                $v[$arr]['qty'] = (float)abs($row['qty']);
-                $v[$arr]['amount'] = (float)abs($row['amount']);
-                $v[$arr]['price'] = (float)abs($row['price']);
-                $v[$arr]['mainUnit'] = $row['mainUnit'];
-                $v[$arr]['description'] = $row['description'];
-                $v[$arr]['invId'] = intval($row['invId']);
-                $v[$arr]['invNumber'] = $row['invNumber'];
-                $v[$arr]['locationId'] = intval($row['locationId']);
+            $result['id']                 = intval($data['id']);
+            $result['buId']               = intval($data['buId']);
+            $result['contactName']        = $data['contactName'];
+            $result['date']               = $data['billDate'];
+            $result['billNo']             = $data['billNo'];
+            $result['billType']           = $data['billType'];
+            $result['modifyTime']         = $data['modifyTime'];
+            $result['transType']          = intval($data['transType']);
+            $result['totalQty']           = (float)$data['totalQty'];
+            $result['totalAmount']        = (float)$data['totalAmount'];
+            $result['userName']           = $data['userName'];
+            $result['amount']             = (float)abs($data['totalAmount']);
+            $result['checked']            = intval($data['checked']);
+            $result['status']             = intval($data['checked'])==1 ? 'view' : 'edit';
+            $list = $this->data_model->get_invoice_info('and (iid='.$id.')  order by id desc');
+            foreach ($list as $arr=>$row) {
+                $v[$arr]['invSpec']      = $row['invSpec'];
+                $v[$arr]['goods']        = $row['invName'];
+                $v[$arr]['spec']        = $row['invSpec'];
+                $v[$arr]['invName']      = $row['invName'];
+                $v[$arr]['qty']          = (float)abs($row['qty']);
+                $v[$arr]['amount']       = (float)abs($row['amount']);
+                $v[$arr]['price']        = (float)abs($row['price']);
+                $v[$arr]['mainUnit']     = $row['mainUnit'];
+                $v[$arr]['description']  = $row['description'];
+                $v[$arr]['invId']        = intval($row['invId']);
+                $v[$arr]['invNumber']    = $row['invNumber'];
+                $v[$arr]['locationId']   = intval($row['locationId']);
                 $v[$arr]['locationName'] = $row['locationName'];
-                $v[$arr]['unitId'] = intval($row['unitId']);
-                $v[$arr]['skuId'] = intval($row['skuId']);
-                $v[$arr]['skuName'] = '';
+                $v[$arr]['unitId']       = intval($row['unitId']);
+                $v[$arr]['skuId']        = intval($row['skuId']);
+                $v[$arr]['skuName']      = '';
             }
             //exit(print_r($v));
-            $result['entries'] = $v;
+            $result['entries']     = $v;
         }
         return $result;
     }
