@@ -33,14 +33,30 @@ class AssistData extends CI_Controller
         $user = $this->mysql_model->checkUserPwd($userName, $password);
         if ($user != null) {
             $response->status = true;
-            $fetchData = $this->fetchPayMethodList($fetchConfig);
+            $fetchData = $this->fetchMethodList($fetchConfig);
             $response->info = $fetchData;
         }
         echo json_encode($response);
     }
 
-    private function fetchPayMethodList($fetchConfig)
+    public function ShippingMethod()
     {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $fetchConfig = $postData->fetchConfig;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchMethodList($fetchConfig);
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+    }
+
+    private function fetchMethodList($fetchConfig) {
         $v = array();
         $type = $fetchConfig->typeNumber;
         $skey = $fetchConfig->skey;
@@ -63,4 +79,42 @@ class AssistData extends CI_Controller
         $data['totalsize'] = $this->mysql_model->get_count(CATEGORY, '(isDelete=0) ' . $where . '');
         return $data;
     }
+
+    public function Account() {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $fetchConfig = $postData->fetchConfig;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchAccountList();
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+
+    }
+
+    private function fetchAccountList() {
+        $v = array();
+        $list = $this->mysql_model->get_results(ACCOUNT,'(isDelete=0) order by id');
+        foreach ($list as $arr=>$row) {
+            $v[$arr]['date']        = $row['date'];
+            $v[$arr]['amount']      = (float)$row['amount'];
+            $v[$arr]['del']         = false;
+            $v[$arr]['id']          = intval($row['id']);
+            $v[$arr]['name']        = $row['name'];
+            $v[$arr]['account']     = $row['account'];
+            $v[$arr]['bank']     = $row['bank'];
+            $v[$arr]['currency']     = intval($row['currency']);
+            $v[$arr]['number']      = $row['number'];
+            $v[$arr]['type']        = intval($row['type']);
+        }
+        $data['items']      = $v;
+        $data['totalsize']  = $this->mysql_model->get_count(ACCOUNT,'(isDelete=0)');
+        return $data;
+    }
+
 }
