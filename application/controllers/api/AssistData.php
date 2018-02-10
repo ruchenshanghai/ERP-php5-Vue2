@@ -191,4 +191,163 @@ class AssistData extends CI_Controller
         return $data;
     }
 
+    public function Warehouse() {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchWarehouseList();
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+    }
+    private function fetchWarehouseList() {
+        $v = array();
+        $list = $this->mysql_model->get_results(STORAGE,'(isDelete=0) order by id desc');
+        foreach ($list as $arr=>$row) {
+            $v[$arr]['address']     = $row['address'];;
+            $v[$arr]['delete']      = $row['disable'] > 0 ? true : false;
+            $v[$arr]['allowNeg']    = false;
+            $v[$arr]['deptId']      = intval($row['deptId']);;
+            $v[$arr]['empId']       = intval($row['empId']);;
+            $v[$arr]['groupx']      = $row['groupx'];
+            $v[$arr]['id']          = intval($row['id']);
+            $v[$arr]['number']  = $row['number'];
+            $v[$arr]['name']        = $row['name'];
+            $v[$arr]['email']       = $row['email'];
+            $v[$arr]['phone']       = $row['phone'];
+            $v[$arr]['manager']       = $row['manager'];
+            $v[$arr]['type']        = intval($row['type']);
+        }
+        $data['rows']       = $v;
+        $data['total']      = 1;
+        $data['records']    = $this->mysql_model->get_count(STORAGE,'(isDelete=0)');
+        $data['page']       = 1;
+        return $data;
+    }
+
+    public function Currency() {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchCurrencyList();
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+    }
+    private function fetchCurrencyList() {
+        $v = '';
+        $list = $this->mysql_model->get_results(CURRENCY,'(isDelete=0) order by id');
+        foreach ($list as $arr=>$row) {
+            $v[$arr]['id']         = intval($row['id']);
+            $v[$arr]['code']       = $row['code'];
+            $v[$arr]['name']       = $row['name'];
+            $v[$arr]['symbol']       = $row['symbol'];
+            $v[$arr]['rate']       = $row['rate'];
+            $v[$arr]['note']       = $row['note'];
+            $v[$arr]['isDelete']   = intval($row['isDelete']);
+        }
+        $data['items']     = is_array($v) ? $v : '';
+        $data['totalsize'] = $this->mysql_model->get_count(CURRENCY,'(isDelete=0)');
+        return $data;
+    }
+
+    public function Inventory() {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchInventoryList();
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+    }
+    private function fetchInventoryList() {
+        $v = array();
+        $where = '';
+        $data['records']   = $this->data_model->get_goods($where,3);   //总条数
+        $list = $this->data_model->get_goods($where.' order by id desc');
+        //exit(print_r($list));
+        foreach ($list as $arr=>$row) {
+            $v[$arr]['amount']        = (float)$row['iniamount'];
+            $v[$arr]['barCode']       = $row['barCode'];
+            $v[$arr]['categoryName']  = $row['categoryName'];
+            $v[$arr]['currentQty']    = $row['totalqty'];                            //当前库存
+            $v[$arr]['delete']        = intval($row['disable'])==1 ? true : false;   //是否禁用
+            $v[$arr]['discountRate']  = 0;
+            $v[$arr]['id']            = intval($row['id']);
+            $v[$arr]['isSerNum']      = intval($row['isSerNum']);
+            $v[$arr]['josl']     = $row['josl'];
+            $v[$arr]['name']     = $row['name'];
+            $v[$arr]['number']   = $row['number'];
+            $v[$arr]['pinYin']   = $row['pinYin'];
+            $v[$arr]['locationId']   = intval($row['locationId']);
+            $v[$arr]['locationName'] = $row['locationName'];
+            $v[$arr]['locationNo'] = '';
+            $v[$arr]['purPrice']   = $row['purPrice'];
+            $v[$arr]['currency']   = $row['currency'];
+            $v[$arr]['quantity']   = $row['iniqty'];
+            $v[$arr]['salePrice']  = $row['salePrice'];
+            $v[$arr]['skuClassId'] = $row['skuClassId'];
+            $v[$arr]['spec']       = $row['spec'];
+            $v[$arr]['remark']       = $row['remark'];
+            $v[$arr]['unitCost']   = $row['iniunitCost'];
+            $v[$arr]['unitId']     = intval($row['unitId']);
+            $v[$arr]['unitName']   = $row['unitName'];
+
+
+            // 库存数量
+            // 获取该商品在库数量
+            $res = $this->mysql_model->query ( INVOICE_INFO, "SELECT SUM(qty) as stockQty from " . INVOICE_INFO . " WHERE invId=$row[id]" );
+            $v [$arr] ['stockQty'] = $res ['stockQty'];
+
+        }
+        $data['rows']   = $v;
+        return $data;
+    }
+
+    public function Unit() {
+        $postData = json_decode(file_get_contents('php://input'));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $fetchData = $this->fetchUnitList();
+            $response->info = $fetchData;
+        }
+        echo json_encode($response);
+    }
+    private function fetchUnitList() {
+        $where = '';
+        $v = '';
+        $list = $this->mysql_model->get_results(UNIT,'(isDelete=0) '.$where.' order by id desc');
+        foreach ($list as $arr=>$row) {
+            $v[$arr]['default']    = $row['default']==1 ? true : false;
+            $v[$arr]['guid']       = $row['guid'];
+            $v[$arr]['id']         = intval($row['id']);
+            $v[$arr]['name']       = $row['name'];
+            $v[$arr]['rate']       = intval($row['rate']);
+            $v[$arr]['isDelete']   = intval($row['isDelete']);
+            $v[$arr]['unitTypeId'] = intval($row['unitTypeId']);
+        }
+        $data['items']     = is_array($v) ? $v : '';
+        $data['totalsize'] = $this->mysql_model->get_count(UNIT,'(isDelete=0) '.$where.'');
+        return $data;
+    }
 }
