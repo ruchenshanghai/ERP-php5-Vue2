@@ -241,4 +241,5 @@ class SalesQuote extends CI_Controller
         }
         return $result;
     }
+
 }

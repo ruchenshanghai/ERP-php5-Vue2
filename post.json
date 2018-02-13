@@ -1,0 +1,40 @@
+{
+  "id": 148,
+  "buId": 11,
+  "contactName": "Full Home Limited",
+  "date": "2017-12-13",
+  "deliveryDate": "2017-12-13",
+  "locationId": 5,
+  "billNo": "95ZYPO201712131924383",
+  "transType": 150501,
+  "entries": [
+    {
+      "invId": 10,
+      "invNumber": "95ZYGD0010",
+      "invName": "95ZYGD0010",
+      "invSpec": "NT5TU64M16HG-AC",
+      "skuId": -1,
+      "skuName": "",
+      "unitId": -1,
+      "mainUnit": "PCS",
+      "qty": "5000",
+      "price": "1.250",
+      "discountRate": "1",
+      "deduction": "62.50",
+      "amount": "6187.50",
+      "description": "",
+      "locationId": 5,
+      "locationName": "香港仓库/U-Freight Logis"
+    }
+  ],
+  "totalQty": "5000",
+  "totalAmount": "6187.50",
+  "description": "",
+  "disRate": "1",
+  "disAmount": "123.75",
+  "amount": "6063.75",
+  "paymentMethod": 85,
+  "shippingMethod": 86,
+  "currency": 2,
+  "accId": 3
+}

@@ -235,4 +235,61 @@ class PurchaseOrder extends CI_Controller
         }
         return $result;
     }
+
+
+    public function update() {
+        $postData = json_decode(file_get_contents("php://input"));
+        $userName = $postData->userName;
+        $password = $postData->password;
+        $updateConfig = $postData->updateConfig;
+        $response = new ResponseMessage();
+
+        $user = $this->mysql_model->checkUserPwd($userName, $password);
+        if ($user != null) {
+            $response->status = true;
+            $response->info = $this->updateOrder($updateConfig);
+        }
+        echo json_encode($response);
+    }
+    private function updateOrder($updateConfig) {
+        $info = elements(array(
+            'billType',
+            'transType',
+            'transTypeName',
+            'buId',
+            'billDate',
+            'description',
+            'totalQty',
+            'amount',
+            'arrears',
+            'rpAmount',
+            //'currency',
+            'totalAmount',
+            'hxStateCode',
+            'totalArrears',
+            'disRate',
+            'disAmount',
+            'uid',
+            'userName',
+            'accId',
+            'modifyTime',
+            'orderType',
+            'paymentMethod',
+            'shippingMethod',
+            'currency',
+            'locationId'
+        ),$updateConfig);
+        $this->db->trans_begin();
+        $this->mysql_model->update(ORDER,$info,'(id='.$updateConfig['id'].')');
+        $this->order_info($updateConfig['id'],$updateConfig);
+        $this->account_info($updateConfig['id'],$updateConfig);
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            $this->db->trans_commit();
+            $this->common_model->logs('修改采购单 单据编号：'.$updateConfig['billNo']);
+            return true;
+        }
+    }
 }
