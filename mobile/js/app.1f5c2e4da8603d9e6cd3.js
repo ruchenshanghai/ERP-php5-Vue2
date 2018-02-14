@@ -2630,7 +2630,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           }).then(function (res) {
             _this3.config.Currency = res.data.info.items;
             for (var index in _this3.config.Currency) {
-              _this3.config.Currency[index].key = _this3.config.Currency[index].name;
+              _this3.config.Currency[index].key = _this3.config.Currency[index].id;
               _this3.config.Currency[index].value = _this3.config.Currency[index].name;
             }
             resolve('fetch currency');
@@ -3053,6 +3053,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   components: { Group: __WEBPACK_IMPORTED_MODULE_1_vux_src_components_group_index_vue___default.a, Grid: __WEBPACK_IMPORTED_MODULE_2_vux_src_components_grid_grid_vue___default.a, GridItem: __WEBPACK_IMPORTED_MODULE_3_vux_src_components_grid_grid_item_vue___default.a, Selector: __WEBPACK_IMPORTED_MODULE_4_vux_src_components_selector_index_vue___default.a, Datetime: __WEBPACK_IMPORTED_MODULE_5_vux_src_components_datetime_index_vue___default.a, XInput: __WEBPACK_IMPORTED_MODULE_6_vux_src_components_x_input_index_vue___default.a, XButton: __WEBPACK_IMPORTED_MODULE_7_vux_src_components_x_button_index_vue___default.a, Flexbox: __WEBPACK_IMPORTED_MODULE_8_vux_src_components_flexbox_flexbox_vue___default.a, FlexboxItem: __WEBPACK_IMPORTED_MODULE_9_vux_src_components_flexbox_flexbox_item_vue___default.a },
   data: function data() {
     return {
+      loadingStatus: true,
       orderDetail: {},
       parseFunction: __WEBPACK_IMPORTED_MODULE_10__utils_parseText__["a" /* default */],
       supplierContact: [],
@@ -3066,9 +3067,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     };
   },
   created: function created() {
-    var _this = this;
-
     var self = this;
+    self.loadingStatus = true;
     var assistParams = ['PayMethod', 'ShippingMethod', 'Account', 'SupplierContact', 'CustomerContact', 'Warehouse', 'Currency', 'Inventory', 'Unit'];
     self.$emit('resAssistData', assistParams, function (resData) {
       self.supplierContact = self.config.SupplierContact;
@@ -3097,7 +3097,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           return;
         }
         self.orderDetail = orderRes.info;
-        _this.parseOrderDetailInventory();
+        self.parseOrderDetailInventory();
+        self.loadingStatus = false;
       });
     });
   },
@@ -3184,6 +3185,58 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       };
       this.orderDetail.entries.push(tempNewEntry);
     },
+    makeUpUpdatePostData: function makeUpUpdatePostData() {
+      var postEntries = {};
+      var totalQty = 0;
+      for (var index in this.orderDetail.entries) {
+        totalQty += Number(this.orderDetail.entries[index].qty);
+        var tempObj = {
+          invId: this.orderDetail.entries[index].invId,
+          invNumber: this.orderDetail.entries[index].inventory.number,
+          invName: this.orderDetail.entries[index].inventory.name,
+          invSpec: this.orderDetail.entries[index].inventory.spec,
+          skuId: this.orderDetail.entries[index].inventory.unitId ? this.orderDetail.entries[index].inventory.unitId : -1,
+          skuName: '',
+          unitId: this.orderDetail.entries[index].inventory.unitId,
+          mainUnit: this.orderDetail.entries[index].inventory.unitName,
+          qty: this.orderDetail.entries[index].qty,
+          price: this.orderDetail.entries[index].price,
+          discountRate: this.orderDetail.entries[index].discountRate,
+          deduction: this.orderDetail.entries[index].deduction,
+          amount: this.orderDetail.entries[index].amount,
+          description: this.orderDetail.entries[index].description,
+          locationId: this.orderDetail.entries[index].inventory.locationId,
+          locationName: this.orderDetail.entries[index].inventory.locationName
+        };
+        postEntries.push(tempObj);
+      }
+      var postData = {
+        id: this.orderDetail.id,
+        buId: this.orderDetail.buId,
+        contactName: this.orderDetail.contactName,
+        date: this.orderDetail.date,
+        deliveryDate: this.orderDetail.deliveryDate,
+        locationId: this.orderDetail.locationId,
+        billNo: this.orderDetail.billNo,
+        transType: this.orderDetail.transType,
+        entries: postEntries,
+        totalQty: totalQty,
+        totalAmount: this.orderDetail.totalAmount,
+        description: this.orderDetail.description,
+        disRate: this.orderDetail.disRate,
+        disAmount: this.orderDetail.disAmount,
+        amount: this.orderDetail.amount,
+        paymentMethod: this.orderDetail.paymentMethond,
+        shippingMethod: this.orderDetail.shippingMethod
+      };
+      for (var _index in this.currency) {
+        if (this.currenc[_index].name === this.orderDetail.currencyText) {
+          postData.currency = this.currenc[_index].id;
+          break;
+        }
+      }
+      return postData;
+    },
     updateOrder: function updateOrder() {
       console.log('update');
       var self = this;
@@ -3191,7 +3244,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       postData.userName = self.user.userName;
       postData.password = self.user.password;
       postData.updateConfig = self.orderDetail;
+      postData.updateConfig.totalQty = 0;
+      postData.updateConfig.modifyTime = new Date().toLocaleString();
       for (var index in postData.updateConfig.entries) {
+        postData.updateConfig.totalQty += Number(postData.updateConfig.entries[index].qty);
         postData.updateConfig.entries[index].invNumber = postData.updateConfig.entries[index].inventory.number;
         postData.updateConfig.entries[index].invName = postData.updateConfig.entries[index].inventory.name;
         postData.updateConfig.entries[index].invSpec = postData.updateConfig.entries[index].inventory.spec;
@@ -3199,6 +3255,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         postData.updateConfig.entries[index].locationId = postData.updateConfig.entries[index].inventory.locationId;
         postData.updateConfig.entries[index].locationName = postData.updateConfig.entries[index].inventory.locationName;
       }
+      console.log(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_core_js_json_stringify___default()(postData));
       self.$http.post(self.config.Purchase.PurchaseOrder.updateURL, postData).then(function (orderRes) {
         orderRes = orderRes.data;
         if (!orderRes.status) {
@@ -6986,7 +7043,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('group', {
+  return _c('div', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading",
+      value: (_vm.loadingStatus),
+      expression: "loadingStatus"
+    }],
+    attrs: {
+      "element-loading-text": "拼命加载中",
+      "element-loading-spinner": "el-icon-loading",
+      "element-loading-background": "rgba(0, 0, 0, 0.8)"
+    }
+  }, [_c('group', {
     attrs: {
       "title": '订单编号: ' + _vm.orderDetail.billNo
     }
@@ -7020,11 +7089,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "options": _vm.currency
     },
     model: {
-      value: (_vm.orderDetail.currencyText),
+      value: (_vm.orderDetail.currency),
       callback: function($$v) {
-        _vm.$set(_vm.orderDetail, "currencyText", $$v)
+        _vm.$set(_vm.orderDetail, "currency", $$v)
       },
-      expression: "orderDetail.currencyText"
+      expression: "orderDetail.currency"
     }
   }), _vm._v(" "), _c('selector', {
     attrs: {
@@ -9160,4 +9229,4 @@ module.exports = Component.exports
 
 /***/ })
 ],[274]);
-//# sourceMappingURL=app.aef8e2c75a074d3c5aba.js.map
+//# sourceMappingURL=app.1f5c2e4da8603d9e6cd3.js.map

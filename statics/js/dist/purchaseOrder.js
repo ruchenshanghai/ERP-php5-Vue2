@@ -1331,6 +1331,7 @@ var curRow, curCol, loading, SYSTEM = system = parent.SYSTEM,
 
             var e = this._getEntriesData();
             if (!e) return !1;
+            console.log(JSON.stringify(e))
             if (e.length > 0) {
                 var f = $.trim(a.$_note.val()),
                     g = {

@@ -253,32 +253,22 @@ class PurchaseOrder extends CI_Controller
     }
     private function updateOrder($updateConfig) {
         $info = elements(array(
-            'billType',
-            'transType',
-            'transTypeName',
             'buId',
             'billDate',
             'description',
             'totalQty',
             'amount',
-            'arrears',
-            'rpAmount',
-            //'currency',
             'totalAmount',
-            'hxStateCode',
-            'totalArrears',
             'disRate',
             'disAmount',
-            'uid',
-            'userName',
             'accId',
             'modifyTime',
-            'orderType',
             'paymentMethod',
             'shippingMethod',
             'currency',
             'locationId'
         ),$updateConfig);
+        return $info;
         $this->db->trans_begin();
         $this->mysql_model->update(ORDER,$info,'(id='.$updateConfig['id'].')');
         $this->order_info($updateConfig['id'],$updateConfig);
